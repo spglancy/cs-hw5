@@ -23,11 +23,14 @@ def lcs_dp(strA, strB):
     """Determine the length of the Longest Common Subsequence of 2 strings."""
     rows = len(strA) + 1
     cols = len(strB) + 1
-
     dp_table = [[0 for j in range(cols)] for i in range(rows)]
 
-    
-
+    for row in range(1, rows):
+        for col in range(1, cols):
+            if strA[row - 1] == strB[col - 1]:
+                dp_table[row][col] = dp_table[row - 1][col - 1] + 1
+            else:
+                dp_table[row][col] = max(dp_table[row][col - 1], dp_table[row - 1][col])
     return dp_table[rows-1][cols-1]
 
 def knapsack(items, capacity):
@@ -35,14 +38,13 @@ def knapsack(items, capacity):
     items given."""
     if len(items) == 0 or capacity <= 0:
         return 0
+    
     name, weight, value = items[0]
-
     val_without = knapsack(items[1:], capacity)
 
     if weight > capacity:
         return val_without
-    
-    val_with = value + knapsack(items, capacity)
+    val_with = value knapsack(items[1:], capacity - weight)
 
     return max(val_with, val_without)
 
@@ -53,16 +55,16 @@ def knapsack_dp(items, capacity):
     cols = capacity + 1
     dp_table = [[0 for j in range(cols)] for i in range(rows)]
 
-    for item in range(cols):
-        for capacity in range(rows):
-            if item == 0 or capacity == 0:
-                dp_table[item][capacity] = 0
-                continue
-            val_without = dp_table[item-1][capacity]
-            if items[item-1][1] > capacity:
-                dp_table[item][capacity] = val_without
-            val_with = dp_table[item-1][capacity-items[item-1][1]] + items[item-1][2]
-            dp_table[item][capacity] = max(val_without, val_with)
+    for row in range(1, rows):
+        for col in range(1, cols):
+            if row == 0 or col == 0:
+               dp_table[row][col] = 0
+            elif items[row-1][1] > col:
+               dp_table[row][col] = dp_table[row-1][col]
+            else:
+               value_with = items[row-1][2] + dp_table[row-1][col - items[row-1][1]]
+               value_without = dp_table[row-1][col]
+               dp_table[row][col] = max(value_with, value_without)
 
 
     return dp_table[rows-1][cols-1]
