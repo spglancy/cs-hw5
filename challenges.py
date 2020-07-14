@@ -44,7 +44,7 @@ def knapsack(items, capacity):
 
     if weight > capacity:
         return val_without
-    val_with = knapsack(items[1:], capacity - weight) + value
+    val_with = value + knapsack(items[1:], capacity - weight)
 
     return max(val_with, val_without)
 
