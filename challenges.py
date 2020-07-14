@@ -26,14 +26,25 @@ def lcs_dp(strA, strB):
 
     dp_table = [[0 for j in range(cols)] for i in range(rows)]
 
-    # TODO: Fill in the table using a nested for loop.
+    
 
     return dp_table[rows-1][cols-1]
 
 def knapsack(items, capacity):
     """Return the maximum value that can be stored in the knapsack using the
     items given."""
-    pass
+    if len(items) == 0 or capacity <= 0:
+        return 0
+    name, weight, value = items[0]
+
+    val_without = knapsack(items[1:], capacity)
+
+    if weight > capacity:
+        return val_without
+    
+    val_with = value + knapsack(items, capacity)
+
+    return max(val_with, val_without)
 
 def knapsack_dp(items, capacity):
     """Return the maximum value that can be stored in the knapsack using the
@@ -42,20 +53,47 @@ def knapsack_dp(items, capacity):
     cols = capacity + 1
     dp_table = [[0 for j in range(cols)] for i in range(rows)]
 
-    # TODO: Fill in the table using a nested for loop.
+    for item in range(cols):
+        for capacity in range(rows):
+            if item == 0 or capacity == 0:
+                dp_table[item][capacity] = 0
+                continue
+            val_without = dp_table[item-1][capacity]
+            if items[item-1][1] > capacity:
+                dp_table[item][capacity] = val_without
+            val_with = dp_table[item-1][capacity-items[item-1][1]] + items[item-1][2]
+            dp_table[item][capacity] = max(val_without, val_with)
+
 
     return dp_table[rows-1][cols-1]
     
 def edit_distance(str1, str2):
     """Compute the Edit Distance between 2 strings."""
-    pass
+    if len(str1) == 0 or len(str2) == 0:
+        return max(len(str1), len(str2))
+    if str1[-1] == str2[-1]:
+        return edit_distance(str1[:-1], str2[:-1])
+    insert = edit_distance(str1, str2[:-1])
+    delete = edit_distance(str1[:-1], str2)
+    replace = edit_distance(str1[:-1], str2[:-1])
+    return min(insert, delete, replace) + 1
 
 def edit_distance_dp(str1, str2):
     """Compute the Edit Distance between 2 strings."""
     rows = len(str1) + 1
     cols = len(str2) + 1
     dp_table = [[0 for j in range(cols)] for i in range(rows)]
-
-    # TODO: Fill in the table using a nested for loop.
-
+    for row in range(rows):
+        for col in range(cols):
+            if row == 0 or col == 0:
+                dp_table[row][col] = max(row, col)
+            else:
+                if str1[row - 1] == str2[col - 1]:
+                    dp_table[row][col] = dp_table[row - 1][col - 1]
+                else:
+                    replace = dp_table[row - 1][col - 1]
+                    insert = dp_table[row][col - 1]
+                    delete = dp_table[row - 1][col]
+                    dp_table[row][col] = min(replace, insert, delete) + 1
+    
     return dp_table[rows-1][cols-1]
